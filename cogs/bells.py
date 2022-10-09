@@ -60,27 +60,31 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
     @commands.command(name="pay")
     async def pay(self, ctx, user: discord.User, amount: int):
         "Allows you to pay someone else bells!"
-        if str(ctx.author.id) not in self.bot.data["users"]:
-            self.bot.initiate_user(str(ctx.author.id), 0)
+        if amount > 0:
+            if str(ctx.author.id) not in self.bot.data["users"]:
+                self.bot.initiate_user(str(ctx.author.id), 0)
 
-        if self.bot.data["users"][str(ctx.author.id)]["bells"] >= amount:
-            if str(user.id) not in self.bot.data["users"]:
-                self.bot.initiate_user(str(user.id), 0)
+            if self.bot.data["users"][str(ctx.author.id)]["bells"] >= amount:
+                if str(user.id) not in self.bot.data["users"]:
+                    self.bot.initiate_user(str(user.id), 0)
 
-            self.bot.data["users"][str(user.id)]["bells"] += amount
+                self.bot.data["users"][str(user.id)]["bells"] += amount
 
-            if self.bot.data["users"][str(user.id)]["militia"]:
-                self.bot.data["users"][str(ctx.author.id)]["debt"] -= amount
-                self.bot.data["users"][str(ctx.author.id)]["paid"] += amount
+                if self.bot.data["users"][str(user.id)]["militia"]:
+                    self.bot.data["users"][str(ctx.author.id)]["debt"] -= amount
+                    self.bot.data["users"][str(ctx.author.id)]["paid"] += amount
 
-            self.bot.data["users"][str(ctx.author.id)]["bells"] -= amount
+                self.bot.data["users"][str(ctx.author.id)]["bells"] -= amount
 
-            self.bot.update_json()
+                self.bot.update_json()
 
-            await ctx.send(f"Successfully paid {user.display_name} {amount:,} bells!")
+                await ctx.send(f"Successfully paid {user.display_name} {amount:,} bells!")
+
+            else:
+                await ctx.send("You don't have enough bells!")
 
         else:
-            await ctx.send("You don't have enough bells!")
+            await ctx.send("Invalid amount of bells to send!")
 
 
 async def setup(bot):
