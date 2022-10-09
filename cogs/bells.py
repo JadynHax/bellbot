@@ -1,4 +1,4 @@
-import discord, json, time
+import discord, json, time, random
 from checks import *
 from typing import Optional
 from discord.ext import commands
@@ -51,7 +51,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
             self.bot.initiate_user(str(user.id), 0)
 
         elif self.bot.data["users"][str(user.id)]["debt"] <= 0:
-            await ctx.send("You don't have any debt!")
+            await ctx.send("{} have any debt!".format("You don't" if user.id == ctx.author.id else f"{user.display_name} doesn't"))
 
         else:
             await ctx.send(f"{'You have' if user.id == ctx.author.id else '{} has'.format(user.display_name)} **{self.bot.data['users'][str(user.id)]['debt']:,}** bells of debt!")
@@ -78,6 +78,8 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
                 self.bot.update_json()
 
+                print(f"Successfully paid {user.display_name} {amount:,} bells!")
+
                 await ctx.send(f"Successfully paid {user.display_name} {amount:,} bells!")
 
             else:
@@ -85,6 +87,21 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
         else:
             await ctx.send("Invalid amount of bells to send!")
+
+
+    @commands.command(name="work")
+    @commands.cooldown(5, 86_400.0, commands.BucketType.user)
+    async def work(self, ctx):
+        "Work to earn more bells!\nYou can do this up to 5 times per day. Then you have to wait until tomorrow!"
+        if str(ctx.author.id) not in self.bot.data["users"].keys():
+            self.bot.initiate_user(str(ctx.author.id), 0)
+
+        gained = random.randrange(100, 251)
+        activity = random.choice(["growing crops", "catching bugs", "digging for fossils", "trading turnips on the stalk market", "fishing", "shooting down balloons"])
+
+        self.bot.data["users"][str(ctx.author.id)]["bells"] += gained
+
+        await ctx.send(f"You earned {gained} bells from {activity}!")
 
 
 async def setup(bot):

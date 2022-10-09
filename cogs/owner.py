@@ -1,4 +1,4 @@
-import discord, os, json
+import discord, os, json, copy, asyncio
 from checks import *
 from discord.ext import commands
 
@@ -64,13 +64,52 @@ class Owner(commands.Cog, name="Owner", command_attrs=dict(case_insensitive=True
 
         try:
             with open(os.path.join(".", "bot-data.json"), "r") as datafile:
-                bot_data = json.load(datafile)
+                self.bot.data = json.load(datafile)
 
             await msg.edit(content="Bot data loaded!")
             print("Bot data loaded")
 
         except Exception as e:
             await msg.edit(content=f"Error loading bot data!\n```{e}```")
+
+
+    @commands.command(name="runas", aliases=["ra"])
+    @is_bot_owner()
+    async def run_as(self, ctx, user: discord.User, *, command: str):
+        run_as_msg = copy.copy(ctx.message)
+        run_as_msg._update(dict(channel=ctx.channel, content=f"{ctx.prefix}{command}"))
+        run_as_msg.author = user
+        run_as_ctx = await self.bot.get_context(run_as_msg)
+
+        await self.bot.invoke(run_as_ctx)
+
+
+    @commands.command(name='proxy')
+    @is_bot_owner()
+    async def proxy(self, ctx, channel: int, *, message):
+        """\
+        Send a message in a channel as if you were the bot.
+        """
+        try:
+            await ctx.message.delete()
+        except:
+            pass
+
+        channel = self.bot.get_channel(channel)
+        await channel.send(message)
+
+        if len(message) < 500:
+            msg = await ctx.send(
+                f'Sent "{message}" to {channel.mention} (**#{channel.name}** in **{channel.guild.name}**).',
+            )
+
+        else:
+            msg = await ctx.send(
+                f'Sent message to {channel.mention}. (**#{channel.name}** in **{channel.guild.name}**).',
+            )
+
+        await asyncio.sleep(5.0)
+        await msg.delete()
 
 
 async def setup(bot):

@@ -88,12 +88,9 @@ async def on_command_error(ctx, exception):
 # Add on message processing
 @bot.event
 async def on_message(message):
-    if message.author.id == bot.user.id:
-        pass
+    await bot.process_commands(message)
 
-    else:
-        await bot.process_commands(message)
-
+    if message.author.id != bot.user.id:
         if (message.author.id not in bot.cooldowns.keys()) or (bot.cooldowns[message.author.id] < time.time()):
             if str(message.author.id) in bot.data["users"].keys():
                 bot.data["users"][str(message.author.id)]["bells"] += random.randrange(25, 51)

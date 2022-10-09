@@ -26,6 +26,20 @@ class Militia(commands.Cog, name="Militia", command_attrs=dict(case_insensitive=
         await ctx.send(f"Successfully altered {user.display_name}'s debt!\nTheir debt is now {self.bot.data['users'][str(user.id)]['debt']:,} bells!")
 
 
+    # Add debt to everyone in the system
+    @commands.command(name="all-debt")
+    @is_tom_nook()
+    async def all_debt(self, ctx, amount: int):
+        "Increase everyone's debt by an amount"
+        for user in self.bot.data["users"].keys():
+            if user != "792601986872639520":
+                self.bot.data["users"][user]["debt"] += amount
+
+        self.bot.update_json()
+
+        await ctx.send(f"Increased everyone's debt by {amount:,} bells!")
+
+
     # Make a user a militia member
     @commands.command(name="make-militia", aliases=["mm"])
     @is_tom_nook()
