@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Bot data files (to hide sensitive things like the token)
+bot-data.json
