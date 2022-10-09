@@ -96,8 +96,13 @@ class Militia(commands.Cog, name="Militia", command_attrs=dict(case_insensitive=
                 if self.bot.data["users"][str(user.id)]["debt"] > 0:
                     self.bot.data["users"][str(user.id)]["debt"] -= min(amount, self.bot.data["users"][str(user.id)]["debt"])
                     self.bot.data["users"][str(user.id)]["paid"] += min(amount, self.bot.data["users"][str(user.id)]["debt"])
+<<<<<<< HEAD
                     self.bot.data["users"][str(ctx.author.id)]["debt"] += amount
                     self.bot.data["users"][str(ctx.author.id)]["paid"] -= amount
+=======
+                    self.bot.data["users"][str(ctx.author.id)]["debt"] += min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
+                    self.bot.data["users"][str(ctx.author.id)]["paid"] -= min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
+>>>>>>> 75d2020dccfaefc8669c101760040bf168f80801
 
                 self.bot.update_json()
 
