@@ -58,8 +58,15 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
     # Pay user
     @commands.command(name="pay")
-    async def pay(self, ctx, user: Union[discord.Member, discord.User], amount: int):
+    async def pay(self, ctx, user: Union[discord.Member, discord.User, str], amount: int):
         "Allows you to pay someone else bells!"
+        if isinstance(user, str):
+            if user.lower() == "debt":
+                user = self.bot.get_user(792601986872639520)
+
+            else:
+                raise ValueError(f"{user} is an invalid argument!")
+
         if amount > 0:
             if str(ctx.author.id) not in self.bot.data["users"]:
                 self.bot.initiate_user(str(ctx.author.id), 0)
@@ -70,7 +77,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
                 self.bot.data["users"][str(user.id)]["bells"] += amount
 
-                if self.bot.data["users"][str(user.id)]["militia"]:
+                if user.id == 792601986872639520:
                     if self.bot.data["users"][str(ctx.author.id)]["debt"] > 0:
                         self.bot.data["users"][str(ctx.author.id)]["debt"] -= min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
                         self.bot.data["users"][str(ctx.author.id)]["paid"] += min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])

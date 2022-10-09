@@ -84,19 +84,20 @@ class Militia(commands.Cog, name="Militia", command_attrs=dict(case_insensitive=
     @is_militia()
     @commands.cooldown(1, 86_400.0, commands.BucketType.user)
     async def take_bells(self, ctx, user: Union[discord.Member, discord.User], amount: int):
-        "Allows Bell Militia to take someone's bells (up to 500) once per day."
+        "Allows Bell Militia to take someone's bells (up to 2,500) once per day."
         if str(user.id) not in self.bot.data["users"]:
             self.bot.initiate_user(str(user.id), 0)
 
-        if 0 < amount <= 500 and not self.bot.data["users"][str(user.id)]["militia"]:
+        if 0 < amount <= 2_500 and not self.bot.data["users"][str(user.id)]["militia"]:
             if self.bot.data["users"][str(user.id)]["bells"] >= amount:
                 self.bot.data["users"][str(ctx.author.id)]["bells"] += amount
+                self.bot.data["users"][str(user.id)]["bells"] -= amount
 
                 if self.bot.data["users"][str(user.id)]["debt"] > 0:
                     self.bot.data["users"][str(user.id)]["debt"] -= min(amount, self.bot.data["users"][str(user.id)]["debt"])
                     self.bot.data["users"][str(user.id)]["paid"] += min(amount, self.bot.data["users"][str(user.id)]["debt"])
-
-                self.bot.data["users"][str(user.id)]["bells"] -= amount
+                    self.bot.data["users"][str(ctx.author.id)]["debt"] += amount
+                    self.bot.data["users"][str(ctx.author.id)]["paid"] -= amount
 
                 self.bot.update_json()
 
