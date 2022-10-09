@@ -37,8 +37,8 @@ class Miscellaneous(
         lines, chars, files = 0, 0, 0
 
         for root, dirs, files_ in os.walk("."):
-            for file in files_:
-                if not file.endswith(".pyc"):
+            if not any([ignorename in root for ignorename in [".git", "__pycache__"]]):
+                for file in files_:
                     with open(os.path.join(root, file), "r") as infile:
                         contents = infile.read()
 
