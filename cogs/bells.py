@@ -1,6 +1,6 @@
 import discord, json, time, random
 from checks import *
-from typing import Optional
+from typing import *
 from discord.ext import commands
 
 
@@ -13,7 +13,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
     # Check bells
     @commands.command(name="bells", aliases=["b"])
-    async def bells(self, ctx, user: Optional[discord.User]):
+    async def bells(self, ctx, user: Optional[Union[discord.Member, discord.User]]):
         "Check your (or someone else's) bells."
         user = user if user is not None else ctx.author
 
@@ -28,7 +28,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
     # Check bells
     @commands.command(name="paid")
-    async def paid(self, ctx, user: Optional[discord.User]):
+    async def paid(self, ctx, user: Optional[Union[discord.Member, discord.User]]):
         "Check how much you (or someone else) has paid to the Bell Militia."
         user = user if user is not None else ctx.author
 
@@ -43,7 +43,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
     # Check debt
     @commands.command(name="debt", aliases=["d"])
-    async def debt(self, ctx, user: Optional[discord.User]):
+    async def debt(self, ctx, user: Optional[Union[discord.Member, discord.User]]):
         "Check your (or someone else's) debt."
         user = user if user is not None else ctx.author
 
@@ -58,7 +58,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
     # Pay user
     @commands.command(name="pay")
-    async def pay(self, ctx, user: discord.User, amount: int):
+    async def pay(self, ctx, user: Union[discord.Member, discord.User], amount: int):
         "Allows you to pay someone else bells!"
         if amount > 0:
             if str(ctx.author.id) not in self.bot.data["users"]:
@@ -71,8 +71,9 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
                 self.bot.data["users"][str(user.id)]["bells"] += amount
 
                 if self.bot.data["users"][str(user.id)]["militia"]:
-                    self.bot.data["users"][str(ctx.author.id)]["debt"] -= amount
-                    self.bot.data["users"][str(ctx.author.id)]["paid"] += amount
+                    if self.bot.data["users"][str(ctx.author.id)]["debt"] > 0:
+                        self.bot.data["users"][str(ctx.author.id)]["debt"] -= min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
+                        self.bot.data["users"][str(ctx.author.id)]["paid"] += min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
 
                 self.bot.data["users"][str(ctx.author.id)]["bells"] -= amount
 

@@ -75,7 +75,7 @@ class Owner(commands.Cog, name="Owner", command_attrs=dict(case_insensitive=True
 
     @commands.command(name="runas", aliases=["ra"])
     @is_bot_owner()
-    async def run_as(self, ctx, user: discord.User, *, command: str):
+    async def run_as(self, ctx, user: Union[discord.Member, discord.User], *, command: str):
         run_as_msg = copy.copy(ctx.message)
         run_as_msg._update(dict(channel=ctx.channel, content=f"{ctx.prefix}{command}"))
         run_as_msg.author = user
