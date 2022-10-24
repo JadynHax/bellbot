@@ -82,7 +82,7 @@ class Militia(commands.Cog, name="Militia", command_attrs=dict(case_insensitive=
     # Allow militia members to take bells
     @commands.command(name="take-bells")
     @is_militia()
-    @commands.cooldown(1, 86_400.0, commands.BucketType.user)
+    @user_cooldown(86_400.0)
     async def take_bells(self, ctx, user: Union[discord.Member, discord.User], amount: int):
         "Allows Bell Militia to take someone's bells (up to 2,500) once per day."
         if str(user.id) not in self.bot.data["users"]:

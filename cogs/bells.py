@@ -77,16 +77,16 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
                 self.bot.data["users"][str(user.id)]["bells"] += amount
 
-                if user.id == 792601986872639520:
+                if self.bot.data["users"][str(user.id)]["militia"]:
                     if self.bot.data["users"][str(ctx.author.id)]["debt"] > 0:
                         self.bot.data["users"][str(ctx.author.id)]["debt"] -= min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
+                        self.bot.data["users"][str(user.id)]["debt"] += min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
                         self.bot.data["users"][str(ctx.author.id)]["paid"] += min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
+                        self.bot.data["users"][str(user.id)]["paid"] -= min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
 
                 self.bot.data["users"][str(ctx.author.id)]["bells"] -= amount
 
                 self.bot.update_json()
-
-                print(f"Successfully paid {user.display_name} {amount:,} bells!")
 
                 await ctx.send(f"Successfully paid {user.display_name} {amount:,} bells!")
 
@@ -98,9 +98,9 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
 
     @commands.command(name="work")
-    @commands.cooldown(5, 86_400.0, commands.BucketType.user)
+    @user_cooldown(17_280)
     async def work(self, ctx):
-        "Work to earn more bells!\nYou can do this up to 5 times per day. Then you have to wait until tomorrow!"
+        "Work to earn more bells!\nYou can do this up to 5 times per day (about every 5 hours)."
         if str(ctx.author.id) not in self.bot.data["users"].keys():
             self.bot.initiate_user(str(ctx.author.id), 0)
 

@@ -1,4 +1,5 @@
 import discord, os, json, copy, asyncio
+from typing import *
 from checks import *
 from discord.ext import commands
 
