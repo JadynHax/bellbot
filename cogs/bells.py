@@ -35,11 +35,11 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
         if str(user.id) not in self.bot.data["users"].keys():
             self.bot.initiate_user(str(user.id), 0)
 
-        if self.bot.data["users"][str(user.id)]["bells"] <= 0:
-            await ctx.send("You don't have any bells!")
+        if self.bot.data["users"][str(user.id)]["paid"] <= 0:
+            await ctx.send("You haven't paid any debt off!")
 
         else:
-            await ctx.send(f"{'You have' if user.id == ctx.author.id else '{} has'.format(user.display_name)} **{self.bot.data['users'][str(user.id)]['bells']:,}** bells!")
+            await ctx.send(f"{'You have' if user.id == ctx.author.id else '{} has'.format(user.display_name)} paid **{self.bot.data['users'][str(user.id)]['paid']:,}** bells to Tom Nook!")
 
     # Check debt
     @commands.command(name="debt", aliases=["d"])
