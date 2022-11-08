@@ -78,10 +78,14 @@ bot = commands.Bot(command_prefix=get_prefixes, intents=intents, case_insensitiv
 # Managing command errors
 @bot.event
 async def on_command_error(ctx, exception):
-    if isinstance(exception, (commands.CheckFailure, commands.CheckAnyFailure, commands.MissingPermissions, commands.CommandNotFound)):
+    if isinstance(exception, (commands.CheckAnyFailure, commands.MissingPermissions, commands.CommandNotFound)):
         message = await ctx.send(exception)
         await asyncio.sleep(10)
-        await message.delete()
+        await message.delete()\
+
+    elif isinstance(exception, commands.CheckFailure):
+        await ctx.send(exception)
+
     else:
         await ctx.send(f"```\n{exception}\n```")
         print(exception)
