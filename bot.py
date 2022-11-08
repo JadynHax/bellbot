@@ -85,7 +85,6 @@ async def on_command_error(ctx, exception):
         message = await ctx.send(exception)
         await asyncio.sleep(5)
         await message.delete()
-
     else:
         await ctx.send(f"```\n{exception}\n```")
         print(exception)
