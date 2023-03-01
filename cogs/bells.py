@@ -77,7 +77,12 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
                 self.bot.data["users"][str(user.id)]["bells"] += amount
 
-                if self.bot.data["users"][str(user.id)]["militia"]:
+                if user == self.bot.get_user(792601986872639520):
+                    if self.bot.data["users"][str(ctx.author.id)]["debt"] > 0:
+                        self.bot.data["users"][str(ctx.author.id)]["debt"] -= min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
+                        self.bot.data["users"][str(ctx.author.id)]["paid"] += min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
+
+                elif self.bot.data["users"][str(user.id)]["militia"]:
                     if self.bot.data["users"][str(ctx.author.id)]["debt"] > 0:
                         self.bot.data["users"][str(ctx.author.id)]["debt"] -= min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
                         self.bot.data["users"][str(user.id)]["debt"] += min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
