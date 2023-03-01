@@ -8,6 +8,16 @@ from discord.ext import commands
 class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True)):
     "Controls the earning of bells."
 
+    upgrade_costs = [
+        98_000,
+        198_000,
+        348_000,
+        548_000,
+        758_000,
+        1_248_000,
+        2_498_000,
+    ]
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -21,7 +31,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
             self.bot.initiate_user(str(user.id), 0)
 
         if self.bot.data["users"][str(user.id)]["bells"] <= 0:
-            await ctx.send("You don't have any bells!")
+            await ctx.send("{} have any bells!".format("You don't" if user.id == ctx.author.id else "{} doesn't".format(user.display_name)))
 
         else:
             await ctx.send(f"{'You have' if user.id == ctx.author.id else '{} has'.format(user.display_name)} **{self.bot.data['users'][str(user.id)]['bells']:,}** bells!")
@@ -90,17 +100,15 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
                         self.bot.data["users"][str(user.id)]["paid"] -= min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
 
                 self.bot.data["users"][str(ctx.author.id)]["bells"] -= amount
-
                 self.bot.update_json()
 
-                await ctx.send(f"Successfully paid {user.display_name} {amount:,} bells!")
+                await ctx.send(f"Successfully paid {user.display_name} **{amount:,}** bells!")
 
             else:
                 await ctx.send("You don't have enough bells!")
 
         else:
             await ctx.send("Invalid amount of bells to send!")
-
 
     @commands.command(name="work")
     @user_cooldown(17_280)
@@ -113,9 +121,39 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
         activity = random.choice(["growing crops", "catching bugs", "digging for fossils", "trading turnips on the stalk market", "fishing", "shooting down balloons"])
 
         self.bot.data["users"][str(ctx.author.id)]["bells"] += gained
+        self.bot.update_json()
 
-        await ctx.send(f"You earned {gained} bells from {activity}!")
+        await ctx.send(f"You earned **{gained}** bells from {activity}!")
 
+    @commands.command(name="upgrade-house", aliases=["upgrade", "uh"])
+    async def upgrade_house(self, ctx):
+        "Upgrade your house! (Gives you more debt but you can brag now)"
+        if str(ctx.author.id) not in self.bot.data["users"].keys():
+            self.bot.initiate_user(str(ctx.author.id), 0)
+
+        if self.bot.data["users"][str(ctx.author.id)]["debt"] <= 0 and self.bot.data["users"][str(ctx.author.id)]["house"] < 7:
+            self.bot.data["users"][str(ctx.author.id)]["debt"] += self.upgrade_costs[self.bot.data["users"][str(ctx.author.id)]["house"]]
+            self.bot.data["users"][str(ctx.author.id)]["house"] += 1
+
+            self.bot.update_json()
+
+            await ctx.send(f"Your house has been upgraded to level **{self.bot.data['users'][str(ctx.author.id)]['house']}**, leaving you **{self.bot.data['users'][str(ctx.author.id)]['debt']:,}** bells in debt!")
+
+        elif self.bot.data["users"][str(ctx.author.id)]["house"] == 7:
+            await ctx.send("Your house is already maximum level (7)!")
+
+        else:
+            await ctx.send(f"You have **{self.bot.data['users'][str(ctx.author.id)]['debt']:,}** bells of debt, so you can't upgrade yet!")
+
+    @commands.command(name="house", aliases=["h"])
+    async def house(self, ctx, user: Optional[Union[discord.Member, discord.User]]):
+        "Show off your house!"
+        user = user if user is not None else ctx.author
+
+        if str(user.id) not in self.bot.data["users"].keys():
+            self.bot.initiate_user(str(user.id), 0)
+
+        await ctx.send("{} house is level **{}**!".format("Your" if user.id == ctx.author.id else "{}'s".format(user.display_name), self.bot.data["users"][str(user.id)]["house"]))
 
 async def setup(bot):
     await bot.add_cog(Bells(bot))

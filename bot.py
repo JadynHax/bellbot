@@ -64,6 +64,7 @@ def initiate_user(user_id, bells):
             "paid": 0,
             "debt": 49_800,
             "militia": False,
+            "house": 0,
         }
 
         bot.update_json()
@@ -162,7 +163,7 @@ async def on_ready():
             +------------------------------------------------------------------------------+
             | Licensing Information                                                        |
             |     License:          MIT License. See LICENSE for details.                  |
-            |     Copyright:        Copyright (c) 2022 Jadyn Rutz (JadynHax)               |
+            |     Copyright:        Copyright (c) 2022-2023 Jadyn Rutz (JadynHax)          |
             +------------------------------------------------------------------------------+
             """
         ).strip("\n")
