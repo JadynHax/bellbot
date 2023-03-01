@@ -24,7 +24,7 @@ class Militia(commands.Cog, name="Militia", command_attrs=dict(case_insensitive=
 
         self.bot.update_json()
 
-        await ctx.send(f"Successfully altered {user.display_name}'s debt!\nTheir debt is now {self.bot.data['users'][str(user.id)]['debt']:,} bells!")
+        await ctx.send(f"Successfully altered {user.display_name if user.id != 792601986872639520 else 'Tom Nook'}'s debt!\nTheir debt is now {self.bot.data['users'][str(user.id)]['debt']:,} bells!")
 
 
     # Add debt to everyone in the system
@@ -54,10 +54,10 @@ class Militia(commands.Cog, name="Militia", command_attrs=dict(case_insensitive=
 
             self.bot.update_json()
 
-            await ctx.send(f"Successfully made {user.display_name} a member of the Bell Militia!")
+            await ctx.send(f"Successfully made {user.display_name if user.id != 792601986872639520 else 'Tom Nook'} a member of the Bell Militia!")
 
         else:
-            await ctx.send(f"{user.display_name} is already a member of the Bell Militia!")
+            await ctx.send(f"{user.display_name if user.id != 792601986872639520 else 'Tom Nook'} is already a member of the Bell Militia!")
 
 
     # Revoke a user's militia status
@@ -73,10 +73,10 @@ class Militia(commands.Cog, name="Militia", command_attrs=dict(case_insensitive=
 
             self.bot.update_json()
 
-            await ctx.send(f"Successfully revoked {user.display_name}'s Bell Militia membership!")
+            await ctx.send(f"Successfully revoked {user.display_name if user.id != 792601986872639520 else 'Tom Nook'}'s Bell Militia membership!")
 
         else:
-            await ctx.send(f"{user.display_name} is not a member of the Bell Militia!")
+            await ctx.send(f"{user.display_name if user.id != 792601986872639520 else 'Tom Nook'} is not a member of the Bell Militia!")
 
 
     # Allow militia members to take bells
@@ -101,10 +101,10 @@ class Militia(commands.Cog, name="Militia", command_attrs=dict(case_insensitive=
 
                 self.bot.update_json()
 
-                await ctx.send(f"Successfully took {amount:,} bells from {user.display_name}!")
+                await ctx.send(f"Successfully took {amount:,} bells from {user.display_name if user.id != 792601986872639520 else 'Tom Nook'}!")
 
             else:
-                await ctx.send(f"{user.display_name} doesn't have enough bells!")
+                await ctx.send(f"{user.display_name if user.id != 792601986872639520 else 'Tom Nook'} doesn't have enough bells!")
 
         elif self.bot.data["users"][str(user.id)]["militia"]:
             await ctx.send("Cannot take bells from militia!")

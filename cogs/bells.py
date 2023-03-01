@@ -61,7 +61,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
             self.bot.initiate_user(str(user.id), 0)
 
         elif self.bot.data["users"][str(user.id)]["debt"] <= 0:
-            await ctx.send("{} have any debt!".format("You don't" if user.id == ctx.author.id else f"{user.display_name} doesn't"))
+            await ctx.send("{} have any debt!".format("You don't" if user.id == ctx.author.id else f"{user.display_name if user.id != 792601986872639520 else 'Tom Nook'} doesn't"))
 
         else:
             await ctx.send(f"{'You have' if user.id == ctx.author.id else '{} has'.format(user.display_name)} **{self.bot.data['users'][str(user.id)]['debt']:,}** bells of debt!")
@@ -87,7 +87,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
 
                 self.bot.data["users"][str(user.id)]["bells"] += amount
 
-                if user == self.bot.get_user(792601986872639520):
+                if user.id == 792601986872639520:
                     if self.bot.data["users"][str(ctx.author.id)]["debt"] > 0:
                         self.bot.data["users"][str(ctx.author.id)]["debt"] -= min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
                         self.bot.data["users"][str(ctx.author.id)]["paid"] += min(amount, self.bot.data["users"][str(ctx.author.id)]["debt"])
@@ -102,7 +102,7 @@ class Bells(commands.Cog, name="Bells", command_attrs=dict(case_insensitive=True
                 self.bot.data["users"][str(ctx.author.id)]["bells"] -= amount
                 self.bot.update_json()
 
-                await ctx.send(f"Successfully paid {user.display_name} **{amount:,}** bells!")
+                await ctx.send(f"Successfully paid {user.display_name if user.id != 792601986872639520 else 'Tom Nook'} **{amount:,}** bells!")
 
             else:
                 await ctx.send("You don't have enough bells!")
